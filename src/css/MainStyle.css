@@ -1,0 +1,43 @@
+main {
+    flex-grow: 1;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.dashboard {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.actions {
+    margin-bottom: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.clock-in {
+    background-color: #28a745;
+    color: white;
+}
+
+.clock-out {
+    background-color: #dc3545;
+    color: white;
+}
+
+.records h3 {
+    margin: 0 0 10px 0;
+}
+
+#attendanceRecords {
+    list-style: disc;
+    padding-left: 20px;
+}

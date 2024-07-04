@@ -1,0 +1,35 @@
+header {
+    background-color: #ba9469;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+header h2 {
+    margin: 0;
+}
+
+.hamburger {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    font-size: 24px;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: none;
+    padding: 0;
+}
+
+/* Show hamburger on small screens */
+@media (max-width: 768px) {
+    .hamburger {
+        display: block;
+    }
+    header {
+        margin-left: 0;
+    }
+}
