@@ -9,6 +9,7 @@ main {
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
 }
 
 .actions {
@@ -40,4 +41,26 @@ button {
 #attendanceRecords {
     list-style: disc;
     padding-left: 20px;
+}
+.search{
+    display: flex;
+    align-items: center;
+}
+.search button{
+    font-size: 13px;
+    padding: 10px;
+}
+.search input{
+    width: 150px;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 2px;
+}
+.search-result{
+    height: 100px;
+    border: 1px solid #ccc;
+    overflow-y: scroll;
+    margin-top: 5px;
 }

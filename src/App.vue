@@ -1,16 +1,16 @@
 <template>
-  <Header></Header>
-  <Menu></Menu>
-  
+  <Header v-if="!$route.meta.hideLayout"></Header>
+  <Menu v-if="!$route.meta.hideLayout"></Menu>
   <router-view></router-view>
-  <Footer></Footer>
+  <Footer v-if="!$route.meta.hideLayout"></Footer>
 </template>
 
 <script lang="ts">
+
 import { defineComponent } from 'vue';
+
 import Footer from './components/layouts/Footer.vue';
 import Header from './components/layouts/Header.vue';
-
 import Menu from './components/layouts/Menu.vue';
 
 export default defineComponent({
@@ -49,6 +49,7 @@ Header{
   position: fixed;
   width: 100%;
 }
+
 @media (max-width: 768px) {
     Main {
         margin-left: 0;
