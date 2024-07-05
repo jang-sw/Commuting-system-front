@@ -28,6 +28,7 @@
             },
             navigateTo(path: string) {
                 this.$router.push(path);
+                this.toggleMenu()
             }
         }
     });

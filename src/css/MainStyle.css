@@ -27,16 +27,25 @@ button {
 .clock-in {
     background-color: #28a745;
     color: white;
-    width: 100px;
+    width: 140px;
     margin-right: 3px;
 }
 .clock-in:hover {
     background-color: #005013;
 }
+.ooo {
+    background-color: #7c6158;
+    color: white;
+    width: 140px;
+}
+.ooo:hover {
+    background-color: #5b3a2f;
+}
 .clock-out {
     background-color: #dc3545;
     color: white;
-    width: 100px;
+    width: 140px;
+    margin-right: 3px;
 }
 .clock-out:hover {
     background-color: #75000c;
@@ -72,4 +81,12 @@ button {
     border: 1px solid #ccc;
     overflow-y: scroll;
     margin-top: 5px;
+}
+
+/* Hide sidebar on small screens */
+@media (max-width: 768px) {
+    .ooo, .clock-in, .clock-out {
+        width: 100%;
+        margin-bottom: 3px;
+    }
 }

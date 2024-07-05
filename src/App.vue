@@ -49,7 +49,16 @@ Header{
   position: fixed;
   width: 100%;
 }
-
+.modal-background{
+  z-index: 1;
+  background-color: #333333a6;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: none;
+}
 @media (max-width: 768px) {
     Main {
         margin-left: 0;

@@ -2,12 +2,12 @@
     <main>
         <div class="dashboard">
             <div class="actions">
-                <button id="clockInBtn" class="clock-in">Clock In</button>
-                <button id="clockOutBtn" class="clock-out">Clock Out</button>
+                <button class="clock-in">업무 시작</button>
+                <button class="clock-out">업무 종료</button>
+                <button class="ooo">외출(자리 비움)</button>
             </div>
             <div class="records">
-                <h3>Recent Attendance Records</h3>
-                <ul id="attendanceRecords"></ul>
+                <h3>현재 상태 : <span style="color: #685e57;">업무 전</span></h3>
             </div>
         </div>
         <div class="dashboard" >
