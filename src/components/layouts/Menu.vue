@@ -1,24 +1,28 @@
 <template>
     <nav class="sidebar" id="sidebar">
-        <ul>
-            <li><a href="#">출퇴근 처리</a></li>
-            <li><a href="#">휴가 신청</a></li>
-            <li><a href="#">내 근태 보기</a></li>
-        </ul>
+      <ul>
+        <li @click="navigateTo('/')">출퇴근 처리</li>
+        <li @click="navigateTo('/leave')">휴가 신청</li>
+        <li @click="navigateTo('/history')">내 근무 내역 확인</li>
+      </ul>
     </nav>
-</template>
-
+  </template>
+  
 <script lang="ts">
-    export default {
+    import { defineComponent } from 'vue';
+  
+    export default defineComponent({
         name: 'MenuComponent',
-        data(){
-            return {
-            
-            }
+        data() {
+            return {};
         },
-        
-    }
+        methods: {
+            navigateTo(path: string) {
+                this.$router.push(path);
+            }
+        }
+    });
 </script>
 <style>
-@import "../../css/MenuStyle.css";
+    @import "../../css/MenuStyle.css";
 </style>

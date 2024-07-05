@@ -9,8 +9,11 @@ header {
 
 header h2 {
     margin: 0;
+    
 }
-
+header h2 span{
+    cursor: pointer;
+}
 .hamburger {
     position: absolute;
     left: 10px;

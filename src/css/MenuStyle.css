@@ -28,9 +28,6 @@
 
 .sidebar li {
     margin: 0;
-}
-
-.sidebar a {
     color: white;
     text-decoration: none;
     display: block;
@@ -39,9 +36,21 @@
     box-sizing: border-box;
     border-radius: 0;
     transition: background-color 0.3s, transform 0.3s;
+    cursor: pointer;
 }
 
-.sidebar a:hover {
+/* .sidebar a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 10px 20px;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 0;
+    transition: background-color 0.3s, transform 0.3s;
+} */
+
+.sidebar li:hover {
     background-color: #a77031;
     transform: scaleY(1.1);
 }

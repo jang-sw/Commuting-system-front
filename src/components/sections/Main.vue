@@ -17,6 +17,9 @@
                 <input type="text"/>
                 <button class="search-btn"> 검색 </button>
             </div>
+            <div class="search-result">
+
+            </div>
         </div>
     </main>
 </template>

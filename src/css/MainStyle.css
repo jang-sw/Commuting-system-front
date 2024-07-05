@@ -27,11 +27,20 @@ button {
 .clock-in {
     background-color: #28a745;
     color: white;
+    width: 100px;
+    margin-right: 3px;
 }
-
+.clock-in:hover {
+    background-color: #005013;
+}
 .clock-out {
     background-color: #dc3545;
     color: white;
+    width: 100px;
+}
+.clock-out:hover {
+    background-color: #75000c;
+
 }
 
 .records h3 {
