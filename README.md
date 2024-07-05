@@ -1,4 +1,4 @@
-# commuting-syetem-frontend
+# commuting-system-frontend
 
 
 Vue를 활용한 출퇴근 관리 시스템 반응형 웹
