@@ -77,9 +77,10 @@ button {
     margin-right: 2px;
 }
 .search-result{
-    height: 100px;
+    height: 250px;
     border: 1px solid #ccc;
-    overflow-y: scroll;
+    overflow: scroll ;
+    white-space:nowrap;
     margin-top: 5px;
 }
 
