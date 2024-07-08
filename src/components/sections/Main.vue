@@ -7,7 +7,7 @@
                 <button class="ooo">외출(자리 비움)</button>
             </div>
             <div class="records">
-                <h3>현재 상태 : <span style="color: #685e57;">업무 전</span></h3>
+                <h3>현재 상태 : <span style="color: #685e57;">{{ state }}</span></h3>
             </div>
         </div>
         <div class="dashboard" >
@@ -25,14 +25,57 @@
 </template>
 
 <script lang="ts">
-    export default {
+    import { defineComponent } from 'vue';
+    import axios from 'axios';
+    import swal from 'sweetalert2';
+    import qs from 'qs';
+    import conf from '../../conf/conf.json';
+    import { chkSession } from '@/modules/SessionModule';
+
+    export default defineComponent({
         name: 'MainComponent',
         data(){
-            return {
-            
+            return { 
+                serverUrl: conf.server,
+                state:""
             }
-        }
-    }
+        },
+        async created() {
+            const chkRes = await chkSession(this.serverUrl)
+            if(chkRes != 1) this.$router.push("/login");
+            this.getTodayCommuting ();
+        },
+        methods: {
+            async getTodayCommuting (){
+                const token = sessionStorage.getItem('token')
+                const userInfo = sessionStorage.getItem('userInfo')
+                const parsedUserInfo: any = qs.parse(userInfo ?? '');
+
+                return await axios.get(
+                    `${this.serverUrl}/api/commute/today`,
+                    {
+                        headers: { 
+                            'content-type': 'application/x-www-form-urlencoded' 
+                            , 'accountId' : parsedUserInfo['accountId']
+                            , 'Authorization': token
+                        }
+                    }
+                ).then( async (res)=>{
+                    
+                    if(res.data.data.dayOff){
+                        this.state = res.data.data.dayOff.category;
+                    }
+                    if(res.data.data.commuting){
+                        this.state = res.data.data.commuting.state;
+                    }
+                    if(!this.state)this.state = '업무전'
+                    else this.state =  this.state == 'START' ? '업무중' : this.state == 'END' ? '업무 종료' : this.state == 'OUTING' ? '외출중' : this.state
+                }).catch( async (err) =>{
+                    console.log(err)
+                })
+            }
+        },
+    });
 </script>
 <style>
 @import "../../css/MainStyle.css";

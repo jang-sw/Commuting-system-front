@@ -39,7 +39,7 @@
         async created () {
             const chkRes = await chkSession(this.serverUrl)
             if(chkRes == 1) this.$router.push("/");
-        },
+        },  
         methods:{
             async login(event: Event){
                 this.isProcessing = true;
@@ -80,7 +80,7 @@
                         , icon : "error"
                     })
                 });
-                this.isProcessing = true;
+                this.isProcessing = false;
             },
             
         }

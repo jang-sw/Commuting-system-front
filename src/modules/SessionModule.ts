@@ -5,7 +5,7 @@ export const chkSession = async (serverUrl: string) => {
     const token = sessionStorage.getItem('token')
     const userInfo = sessionStorage.getItem('userInfo')
     if(!token || !userInfo ){
-        return;
+        return -1;
     }
     const parsedUserInfo: any = qs.parse(userInfo ?? '');
     return await axios.get(
@@ -26,7 +26,7 @@ export const chkSession = async (serverUrl: string) => {
         if(res.data.result == 1){
            return 1;
         }else{
-           return await refreshSession(serverUrl)
+          return await refreshSession(serverUrl)
         } 
     }).catch( async (err) =>{
         console.log(err)
@@ -45,8 +45,8 @@ export const refreshSession = async (serverUrl: string) => {
     }
     const parsedUserInfo: any = qs.parse(userInfo ?? '');
 
-    await axios.get(
-      `${serverUrl}/openApi/account/refresh`,
+    return await axios.post(
+      `${serverUrl}/openApi/account/refresh`,"",
       {
         headers: { 
           'content-type': 'application/x-www-form-urlencoded' 
@@ -54,7 +54,8 @@ export const refreshSession = async (serverUrl: string) => {
           , 'Authorization': token
         }
       }
-    ).then(async (res)=>{
+    ).then( (res)=>{
+      
       if(res.data.result == 1){
         sessionStorage.setItem('token' ,res.headers['authorization']);
         return 1;
@@ -63,7 +64,7 @@ export const refreshSession = async (serverUrl: string) => {
         sessionStorage.removeItem('userInfo')
         return -1;
       }
-    }).catch(async (err) =>{
+    }).catch( (err) =>{
         console.log(err)
         sessionStorage.removeItem('token')
         sessionStorage.removeItem('userInfo')

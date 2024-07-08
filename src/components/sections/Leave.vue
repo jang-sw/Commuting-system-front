@@ -43,14 +43,7 @@
             <div class="request-container" id="leave-modal">
                 <form id="leaveRequestForm" class="request-form">
                     <h2>Leave Request <span style="float: right; color:darkgray; cursor: pointer;" @click="leaveModalCloase()">X</span></h2>
-                    <div class="input-group">
-                        <label for="team">Team</label>
-                        <input type="text" id="team" name="team" required>
-                    </div>
-                    <div class="input-group">
-                        <label for="position">Position</label>
-                        <input type="text" id="position" name="position" required>
-                    </div>
+             
                     <div class="input-group">
                         <label for="category">휴가 구분</label>
                         <select type="text" id="category" name="category" required>
@@ -67,7 +60,7 @@
                     </div>
                     <div class="input-group">
                         <label for="name">Name</label>
-                        <input type="text" id="name" name="name" required>
+                        <input style="background-color: lightgrey;" type="text" id="name" name="name" readonly required>
                     </div>
                     <div class="input-group">
                         <label for="startDate">Start Date</label>
