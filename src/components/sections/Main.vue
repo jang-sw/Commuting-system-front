@@ -73,11 +73,14 @@
                         this.state = res.data.data.dayOff.category;
                     }
                     if(res.data.data.commuting){
+                        if(this.state.indexOf('오후') != -1 || this.state.indexOf('종일') != -1) return;
                         this.state = res.data.data.commuting.state;
                     }
+                    
                     if(!this.state)this.state = '업무전'
-                    else this.state =  this.state == 'START' ? '업무중' : this.state == 'END' ? '업무 종료' : this.state == 'OUTING' ? '외출중' : this.state
-               
+                    else {
+                        this.state =  this.state == 'START' ? '업무중' : this.state == 'END' ? '업무 종료' : this.state == 'OUTING' ? '외출중' : this.state
+                    }
                 }).catch( async (err) =>{
                     console.log(err)
                 })
