@@ -2,13 +2,14 @@
     <main>
         <div class="dashboard">
             <div class="actions" v-if="state == '업무전' || state == '업무중' || state == '외출중' || state == '업무 종료'">
-                <button v-bind:disabled="processing" class="clock-in" v-if="state == '업무전'" @click="changeCommutingState('START')">업무 시작</button>
-                <button v-bind:disabled="processing" class="clock-out" v-if="state == '업무중'" @click="changeCommutingState('END')">업무 종료</button>
-                <button v-bind:disabled="processing" class="ooo" v-if="state == '업무중'" @click="changeCommutingState('OUTING')">외출(자리 비움)</button>
-                <button v-bind:disabled="processing" class="clock-in" v-if="state == '외출중'" @click="changeCommutingState('RESTART')">외출 복귀</button>
+                <button v-bind:disabled="processing" class="clock-in" v-if="state == '업무전'" @click="changeCommutingState('START', 0)">업무 시작</button>
+                <button v-bind:disabled="processing" class="clock-out" v-if="state == '업무중'" @click="changeCommutingState('END', 0)">업무 종료</button>
+                <button v-bind:disabled="processing" class="ooo" v-if="state == '업무중'" @click="changeCommutingState('OUTING', 0)">외출(자리 비움)</button>
+                <button v-bind:disabled="processing" class="clock-in" v-if="state == '외출중'" @click="changeCommutingState('RESTART', 0)">외출 복귀</button>
             </div>
             <div class="records">
                 <h3>현재 상태 : <span style="color: #685e57;">{{ state }}</span></h3>
+                {{ now }}
             </div>
         </div>
         <div class="dashboard" >
@@ -16,7 +17,7 @@
             <hr style="background:#867e78; height:1px; border:0; margin-top: 0; ">
             <div class="search">
                 <input type="text" v-model="keyword"/>
-                <button v-bind:disabled="processing" class="search-btn" @click="search()"> 검색 </button>
+                <button v-bind:disabled="processing" class="search-btn" @click="search(0)"> 검색 </button>
             </div>
             <div class="search-result" v-html="list">
 
@@ -31,29 +32,35 @@
     import swal from 'sweetalert2';
     import qs from 'qs';
     import conf from '../../conf/conf.json';
-    import { chkSession } from '@/modules/SessionModule';
+    import { chkSession, refreshSession } from '@/modules/SessionModule';
 
     export default defineComponent({
         name: 'MainComponent',
         data(){
             return { 
+                now:'',
                 serverUrl: conf.server,
-                state:"",
+                state:"", 
                 keyword:'',
                 processing: false,
                 list: ''
             }
         },
         async created() {
+            this.setTime()
+            setInterval(()=>{
+                this.setTime()
+            },1000)
             this.keyword='';
             this.list = '';
             this.processing= false
             const chkRes = await chkSession(this.serverUrl)
             if(chkRes != 1) this.$router.push("/login");
-            this.getTodayCommuting ();
+            this.getTodayCommuting (0);
+            
         },
         methods: {
-            async getTodayCommuting (){
+            async getTodayCommuting (retry: number){
                 const token = sessionStorage.getItem('token')
                 const userInfo = sessionStorage.getItem('userInfo')
                 const parsedUserInfo: any = qs.parse(userInfo ?? '');
@@ -83,9 +90,21 @@
                     }
                 }).catch( async (err) =>{
                     console.log(err)
+                    if(err.response.status == 401 && retry != 1 ){
+                        if(await refreshSession(this.serverUrl) == 1){
+                            await this.getTodayCommuting(1);
+                            return;
+                        }
+                    }
+                    await swal.fire({
+                        text:'에러가 발생했습니다. 다시 시도해 주세요',
+                        icon: 'error'
+                    });
+                    
+                    this.$router.push("/login");
                 })
             },
-            async changeCommutingState(commutingState: string){
+            async changeCommutingState(commutingState: string, retry:number){
                 this.processing = true;
                 const token = sessionStorage.getItem('token')
                 const userInfo = sessionStorage.getItem('userInfo')
@@ -125,16 +144,24 @@
                         location.reload()
                     }
                 }).catch( async (err) =>{
+                    console.log(err)
+                    if(err.response.status == 401 && retry != 1 ){
+                        if(await refreshSession(this.serverUrl) == 1){
+                            await this.changeCommutingState(commutingState, 1);
+                            this.processing = false;
+                            return;
+                        }
+                    }
                     this.processing = false;
                     await swal.fire({
                             text:'에러가 발생했습니다. 다시 시도해 주세요',
                             icon: 'error'
                         });
-                    console.log(err)
-                    location.reload()
+                
+                    this.$router.push("/login");
                 })
             },
-            async search(){
+            async search(retry: number){
                 const token = sessionStorage.getItem('token')
                 const userInfo = sessionStorage.getItem('userInfo')
                 const parsedUserInfo: any = qs.parse(userInfo ?? '');
@@ -169,20 +196,43 @@
                             text:'에러가 발생했습니다. 다시 시도해 주세요',
                             icon: 'error'
                         });
-                        
+                        location.reload()
                     }
                     this.processing = false;
-                    location.reload()
+                    
                 }).catch( async (err) =>{
+                    if(err.response.status == 401 && retry != 1){
+                        if(await refreshSession(this.serverUrl) == 1){
+                            await this.search(1);
+                            this.processing = false;
+                            return;
+                        }
+                    }
                     await swal.fire({
                         text:'에러가 발생했습니다. 다시 시도해 주세요',
                         icon: 'error'
                     });
-                    console.log(err)
+                    
                     this.processing = false;
-                    location.reload()
+                    this.$router.push("/login");
                 })
+            },
+            setTime(){
+                let today = new Date();
+
+                let year = today.getFullYear();
+                let month = ('0' + (today.getMonth() + 1)).slice(-2);
+                let day = ('0' + today.getDate()).slice(-2);
+
+                let dateString = year + '-' + month  + '-' + day;
+                let hours = ('0' + today.getHours()).slice(-2); 
+                let minutes = ('0' + today.getMinutes()).slice(-2);
+                let seconds = ('0' + today.getSeconds()).slice(-2); 
+
+                let timeString = hours + ':' + minutes  + ':' + seconds;
+                this.now = dateString + ' ' + timeString;
             }
+        
         },
         
     });

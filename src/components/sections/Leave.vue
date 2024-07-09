@@ -85,12 +85,26 @@
 
 <script lang="ts">
     import { defineComponent } from 'vue';
+    import axios from 'axios';
+    import swal from 'sweetalert2';
+    import qs from 'qs';
+    import conf from '../../conf/conf.json';
+    import { refreshSession } from '@/modules/SessionModule';
 
     export default defineComponent({
         name: 'LeaveComponent',
         data(){
             return {
-            
+                serverUrl: conf.server,
+                list: [] as {
+                    category: string,
+                    start: string,
+                    end: string,
+                    reason: string
+                }[],
+                page: 1,
+                pages: [] as number[],
+                maxPage: 1,
             }
         },
         methods: {
