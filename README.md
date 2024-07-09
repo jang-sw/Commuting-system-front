@@ -7,12 +7,3 @@ Responsive Web Attendance Management System Using Vue
 
 Vueを活用したレスポンシブウェブの出退勤管理システム
 
-
-
-<hr>
-
-개발중
-
-In the process of developing
-
-開発中
