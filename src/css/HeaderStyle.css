@@ -6,7 +6,11 @@ header {
     position: relative;
     z-index: 1;
 }
-
+.user-info{
+    position:fixed;
+    top: 10px; 
+    right: 10px;
+}
 header h2 {
     margin: 0;
     
@@ -34,5 +38,12 @@ header h2 span{
     }
     header {
         margin-left: 0;
+        padding: 15px;
+    }
+    .user-info{
+        position:fixed;
+        top: 39px; 
+        right: 10px;
+        font-size: 12px;
     }
 }

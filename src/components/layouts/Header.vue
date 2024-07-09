@@ -2,7 +2,7 @@
     <header>
         <button class="hamburger" id="hamburger" @click="toggleMenu()">&#9776;</button>
         <h2 @click="navigateTo('/')"><span>Dashboard</span></h2>
-        <div style="position:fixed; top: 10px; right: 10px;">Hi 
+        <div class="user-info">Hi 
             <i style="cursor: pointer;" @click="pwdModalOpen()">{{name}}</i> !!
             <u style="cursor: pointer; margin-left: 10px;" @click="logout()"> Logout</u>
         </div>
@@ -83,7 +83,18 @@
                 this.$router.push(path);
                 this.toggleMenu()
             },
-            logout(){
+            async logout(){
+                let confirm = await swal.fire({
+                    icon: 'question',
+                    text: '로그아웃 합니까?',
+                    confirmButtonText : "OK",
+                    cancelButtonText : "NO",
+                    showCancelButton : true,
+                })
+                if(!confirm.isConfirmed){
+                    this.isProcessing = false;
+                    return;
+                }
                 sessionStorage.removeItem('token')
                 sessionStorage.removeItem('userInfo')
                 this.$router.push('/login');
