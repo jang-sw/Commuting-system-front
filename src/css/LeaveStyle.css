@@ -120,17 +120,20 @@ table, th, td {
 }
 
 th, td {
-    padding: 10px;
-    text-align: left;
+    padding: 0;
+    text-align: center;
 }
 
 th {
     background-color: #f9f9f9;
     color: #0044cc;
+    font-size: 20px;
 }
 
 td {
     background-color: #fdfdfd;
+    align-items: center;
+    font-size: 16px;
 }
 
 .pagination {
@@ -152,6 +155,12 @@ td {
 .pagination button:hover {
     background-color: #937c5b;
 }
+.cancel-btn{
+    background-color: #b73030;
+}
+.cancel-btn:hover{
+    background-color: #6f0606;
+}
 /* Responsive Design */
 @media (max-width: 768px) {
     .records-container {
@@ -166,8 +175,18 @@ td {
 
     th, td {
         padding: 5px;
+        
     }
-
+    th{
+        font-size: 16px;
+    }
+    td{
+        font-size: 11px;
+    }
+    .cancel-btn{
+        font-size: 11px;
+        padding: 3px;
+    }
     .filter-section {
         flex-direction: column;
         align-items: flex-start;

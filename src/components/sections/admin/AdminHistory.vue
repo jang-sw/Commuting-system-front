@@ -2,10 +2,17 @@
     <main>
         <div class="dashboard">
             <h2>근무 내역</h2>
+            <div class="search">
+                <input placeholder="이름으로 검색" v-model="name">
+                <button v-bind:disabled="isProcessing" class="search-btn" @click="getHistory(0)"> 검색 </button>
+            </div>
+            
             <hr/>
             <table>
                 <thead>
                     <tr>
+                        <th>이름</th>
+                        <th>팀</th>
                         <th>날짜</th>
                         <th>출근</th>
                         <th>퇴근</th>
@@ -13,6 +20,8 @@
                 </thead>
                 <tbody>
                     <tr v-for="(data, i) in list" :key="i">
+                        <td >{{data.name}}</td>
+                        <td >{{data.team}}</td>
                         <td >{{data.date}}</td>
                         <td>{{data.start}} </td>
                         <td>{{data.end}} </td>
@@ -33,37 +42,47 @@
     import axios from 'axios';
     import swal from 'sweetalert2';
     import qs from 'qs';
-    import conf from '../../conf/conf.json';
+    import conf from '../../../conf/conf.json';
     import { refreshSession } from '@/modules/SessionModule';
 
    
     export default defineComponent({
-        name: 'HistoryComponent',
+        name: 'AdminHistoryComponent',
         data(){
             return {
+                isProcessing: false,
                 serverUrl: conf.server,
                 list: [] as {
                     date: string,
                     start: string,
-                    end: string
+                    end: string,
+                    name: string,
+                    position: string,
+                    team: string,
+                    email: string
                 }[],
                 page: 1,
                 pages: [] as number[],
                 maxPage: 1,
+                name:''
             }
         }, 
         async created() {
             const queryParam = this.$route.query.page; 
             this.page = queryParam ? Number(queryParam) : 1;
             console.log(queryParam)
-            await this.getHistory(0)
+            // await this.getHistory(0)
         },
         watch: {
             async '$route.query' (newQuery, oldQuery) {
                 this.list =  [] as {
                     date: string,
                     start: string,
-                    end: string
+                    end: string,
+                    name: string,
+                    position: string,
+                    team: string,
+                    email: string
                 }[];
                 this.page = newQuery.page
                 await this.getHistory(0)
@@ -76,7 +95,7 @@
                 const parsedUserInfo: any = qs.parse(userInfo ?? '');
 
                 return await axios.get(
-                    `${this.serverUrl}/api/commute/history`,
+                    `${this.serverUrl}/adminApi/commute/history`,
                     {
                         headers: { 
                             'content-type': 'application/x-www-form-urlencoded' 
@@ -84,22 +103,41 @@
                             , 'Authorization': token
                         },
                         params:{
-                            page: this.page
+                            page: this.page,
+                            name: this.name
                         }
                     }
                 ).then( async (res)=>{
+                    this.list =  [] as {
+                        date: string,
+                        start: string,
+                        end: string,
+                        name: string,
+                        position: string,
+                        team: string,
+                        email: string
+                    }[];
+
+                    console.log(res.data.data)
                     let hist:  {
                         end : string, 
-                        start: string
+                        start: string,
+                        name: string,
+                        position: string,
+                        team: string,
+                        email: string
                     }[] = res.data.data.hist;
                     hist.map( el => { 
                         let date = el.start.split(' ')[0]
-                        let start = el.start;
-                        let end = el.end;
+                       
                         this.list.push({
                             date: date,
-                            start: start,
-                            end: end
+                            start: el.start,
+                            end: el.end,
+                            name: el.name,
+                            position: el.position,
+                            team: el.team,
+                            email: el.email
                         })
                     });
                     this.pages = [];
@@ -138,7 +176,7 @@
                 if(this.maxPage < page || page < 1){
                     return
                 }
-                this.$router.push(`/history?page=${page}`);
+                this.$router.push(`/admin/history?page=${page}`);
             }
         }
     });

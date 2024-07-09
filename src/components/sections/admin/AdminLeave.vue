@@ -1,21 +1,31 @@
 <template>
     <main>
-        <div class="dashboard">
-            <h2>근무 내역</h2>
+        <div class="dashboard" >
+            <h2>휴가 내역</h2>
+            <div class="search">
+                <input placeholder="이름으로 검색" v-model="name">
+                <button v-bind:disabled="isProcessing" class="search-btn" @click="getHistory(0)"> 검색 </button>
+            </div>
             <hr/>
-            <table>
+            <table style="table-layout: fixed">
                 <thead>
                     <tr>
-                        <th>날짜</th>
-                        <th>출근</th>
-                        <th>퇴근</th>
+                        <th>이름</th>
+                        <th>팀</th>
+                        <th>구분</th>
+                        <th>시작</th>
+                        <th>종료</th>
+                        <th>사유</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr v-for="(data, i) in list" :key="i">
-                        <td >{{data.date}}</td>
+                        <td >{{data.name}}</td>
+                        <td >{{data.team}}</td>
+                        <td >{{data.category}}</td>
                         <td>{{data.start}} </td>
                         <td>{{data.end}} </td>
+                        <td style="overflow: scroll;">{{data.reason}} </td>
                     </tr>
                 </tbody>
             </table>
@@ -24,6 +34,8 @@
                 <button v-for="(p, i) in pages" :key="i" @click="goPage(p)"> {{ p }}</button> 
                 <button @click="goPage(Number(page) + 1)">Next</button>
             </div>
+
+
         </div> 
     </main>
 </template>
@@ -33,50 +45,67 @@
     import axios from 'axios';
     import swal from 'sweetalert2';
     import qs from 'qs';
-    import conf from '../../conf/conf.json';
+    import conf from '../../../conf/conf.json';
     import { refreshSession } from '@/modules/SessionModule';
 
-   
     export default defineComponent({
-        name: 'HistoryComponent',
+        name: 'AdminLeaveComponent',
         data(){
             return {
                 serverUrl: conf.server,
                 list: [] as {
-                    date: string,
+                    name: string,
+                    team: string,
+                    category: string,
                     start: string,
-                    end: string
+                    end: string,
+                    reason: string,
+                    dayOffId: number
                 }[],
                 page: 1,
                 pages: [] as number[],
                 maxPage: 1,
+                userName:'',
+                isProcessing: false,
+                start: '',
+                end: '',
+                reason:'',
+                category:'연가(오전)',
+                thisMonthUse: 0,
+                thisYearUse: 0,
+                name:'',
+                
             }
-        }, 
+        },
         async created() {
             const queryParam = this.$route.query.page; 
             this.page = queryParam ? Number(queryParam) : 1;
             console.log(queryParam)
-            await this.getHistory(0)
+            // await this.getHistory(0)
         },
         watch: {
             async '$route.query' (newQuery, oldQuery) {
                 this.list =  [] as {
-                    date: string,
+                    name: string,
+                    team: string,
+                    category: string,
                     start: string,
-                    end: string
+                    end: string,
+                    reason: string,
+                    dayOffId: number
                 }[];
                 this.page = newQuery.page
                 await this.getHistory(0)
             }
         },
         methods: {
-            async getHistory (retry: number){
+           async getHistory (retry: number){
                 const token = sessionStorage.getItem('token')
                 const userInfo = sessionStorage.getItem('userInfo')
                 const parsedUserInfo: any = qs.parse(userInfo ?? '');
 
                 return await axios.get(
-                    `${this.serverUrl}/api/commute/history`,
+                    `${this.serverUrl}/adminApi/dayOff/history`,
                     {
                         headers: { 
                             'content-type': 'application/x-www-form-urlencoded' 
@@ -84,22 +113,43 @@
                             , 'Authorization': token
                         },
                         params:{
-                            page: this.page
+                            page: this.page,
+                            name: this.name,
                         }
                     }
                 ).then( async (res)=>{
+                    console.log(res)
+                    this.list =  [] as {
+                        name: string,
+                        team: string,
+                        category: string,
+                        start: string,
+                        end: string,
+                        reason: string,
+                        dayOffId: number
+                    }[]
+                    this.thisYearUse = res.data.data.thisYearUse
+                    this.thisMonthUse = res.data.data.thisMonthUse
                     let hist:  {
-                        end : string, 
-                        start: string
+                        name: string,
+                        team: string,
+                        dayOffId: number,
+                        category: string,
+                        start: string,
+                        end: string,
+                        reason: string
                     }[] = res.data.data.hist;
+
                     hist.map( el => { 
-                        let date = el.start.split(' ')[0]
-                        let start = el.start;
-                        let end = el.end;
+                       
                         this.list.push({
-                            date: date,
-                            start: start,
-                            end: end
+                            name: el.name,
+                            team: el.team,
+                            dayOffId: el.dayOffId,
+                            category: el.category,
+                            start: el.start,
+                            end: el.end,
+                            reason: el.reason
                         })
                     });
                     this.pages = [];
@@ -115,7 +165,8 @@
                         for (let i = startPage; i <= endPage; i++) {
                             this.pages.push(i);
                         }
-                    }   
+                    }
+                       
                 }).catch( async (err) =>{
                     console.log(err)
                     if(err.response.status == 401 && retry != 1 ){
@@ -133,15 +184,15 @@
                 })
             },
             goPage(page: number){
-                console.log(this.maxPage)
-                console.log(page)
                 if(this.maxPage < page || page < 1){
                     return
                 }
-                this.$router.push(`/history?page=${page}`);
+                this.$router.push(`/admin/leave?page=${page}`);
             }
         }
     });
 </script>
 <style>
+@import "../../../css/LeaveStyle.css";
+
 </style>

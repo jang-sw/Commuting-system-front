@@ -16,7 +16,7 @@
             <h4 style="margin: 0; color: #514e4c;">출퇴근 인원 검색</h4>
             <hr style="background:#867e78; height:1px; border:0; margin-top: 0; ">
             <div class="search">
-                <input type="text" v-model="keyword"/>
+                <input type="text" v-model="keyword" placeholder="이름으로 검색"/>
                 <button v-bind:disabled="processing" class="search-btn" @click="search(0)"> 검색 </button>
             </div>
             <div class="search-result" v-html="list">
@@ -54,8 +54,8 @@
             this.keyword='';
             this.list = '';
             this.processing= false
-            const chkRes = await chkSession(this.serverUrl)
-            if(chkRes != 1) this.$router.push("/login");
+            // const chkRes = await chkSession(this.serverUrl)
+            // if(chkRes != 1) this.$router.push("/login");
             this.getTodayCommuting (0);
             
         },
@@ -112,7 +112,7 @@
                 const reqestPath = this.serverUrl + (commutingState == 'START' ? '/api/commute/clockIn' : commutingState == 'END' ? '/api/commute/clockOut' : commutingState == 'OUTING' ? '/api/commute/outing' : '/api/commute/restart')
                 let confirm = await swal.fire({
                     text: commutingState == 'START' ? '업무를 시작합니다.' : commutingState == 'END' ? '업무를 종료합니다.' : commutingState == 'OUTING' ? '외출합니다.' : '외출에서 복귀합니다.',
-                    icon: 'success',
+                    icon: 'question',
                     confirmButtonText : "OK",
                     cancelButtonText : "NO",
                     showCancelButton : true,
@@ -218,19 +218,22 @@
                 })
             },
             setTime(){
-                let today = new Date();
+                const now = new Date();
+                const options: Intl.DateTimeFormatOptions = {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    timeZone: 'Asia/Seoul',
+                    hourCycle: 'h23'
+                };
+                const koreanTimeFormatter = new Intl.DateTimeFormat('ko-KR', options);
 
-                let year = today.getFullYear();
-                let month = ('0' + (today.getMonth() + 1)).slice(-2);
-                let day = ('0' + today.getDate()).slice(-2);
-
-                let dateString = year + '-' + month  + '-' + day;
-                let hours = ('0' + today.getHours()).slice(-2); 
-                let minutes = ('0' + today.getMinutes()).slice(-2);
-                let seconds = ('0' + today.getSeconds()).slice(-2); 
-
-                let timeString = hours + ':' + minutes  + ':' + seconds;
-                this.now = dateString + ' ' + timeString;
+                const formattedTime = koreanTimeFormatter.format(now);
+                
+                this.now = `${formattedTime} KST` ;
             }
         
         },
