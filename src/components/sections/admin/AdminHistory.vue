@@ -43,7 +43,7 @@
     import swal from 'sweetalert2';
     import qs from 'qs';
     import conf from '../../../conf/conf.json';
-    import { refreshSession } from '@/modules/SessionModule';
+    import { refreshSession, chkSession } from '@/modules/SessionModule';
 
    
     export default defineComponent({
@@ -68,10 +68,8 @@
             }
         }, 
         async created() {
-            const queryParam = this.$route.query.page; 
-            this.page = queryParam ? Number(queryParam) : 1;
-            console.log(queryParam)
-            // await this.getHistory(0)
+            const chkRes = await chkSession(this.serverUrl)
+            if(chkRes != 1) this.$router.push("/login");
         },
         watch: {
             async '$route.query' (newQuery, oldQuery) {

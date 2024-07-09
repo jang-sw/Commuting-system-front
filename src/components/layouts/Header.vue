@@ -3,14 +3,14 @@
         <button class="hamburger" id="hamburger" @click="toggleMenu()">&#9776;</button>
         <h2 @click="navigateTo('/')"><span>Dashboard</span></h2>
         <div style="position:fixed; top: 10px; right: 10px;">Hi 
-            <i style="cursor: pointer;" @click="leaveModalOpen()">{{name}}</i> !!
+            <i style="cursor: pointer;" @click="pwdModalOpen()">{{name}}</i> !!
             <u style="cursor: pointer; margin-left: 10px;" @click="logout()"> Logout</u>
         </div>
     </header>
     <div class="modal-background" id="modal-background"></div>
             <div class="request-container" id="pwd-modal">
                 <form id="pwdRequestForm" class="request-form" @submit="changePwd($event, 0)">
-                    <h2>Change Password<span style="float: right; color:darkgray; cursor: pointer;" @click="leaveModalCloase()">X</span></h2>
+                    <h2>Change Password<span style="float: right; color:darkgray; cursor: pointer;" @click="pwdModalCloase()">X</span></h2>
              
                     <div class="input-group">
                         <label for="current-pwd">현재 비밀번호</label>
@@ -18,7 +18,7 @@
                     </div>
                     <div class="input-group">
                         <label for="new-pwd">신규 비밀번호</label>
-                        <input type="password" id="new-pwd" name="new-pwd" required v-model="newPassword">
+                        <input type="password" id="new-pwd" name="new-pwd" required v-model="newPassword" placeholder="알파벳, 숫자를 사용해서 8~16자">
                     </div>
                     <div class="input-group">
                         <label for="retyping-pwd">비밀번호 확인</label>
@@ -57,14 +57,14 @@
             this.name = parsedUserInfo['name'];
         },
         methods: {
-            leaveModalOpen(){
+            pwdModalOpen(){
                 const modal = document.getElementById('pwd-modal');
                 const background = document.getElementById('modal-background');
                 modal!.style.display = 'block';
                 background!.style.display = 'block';
 
             },
-            leaveModalCloase(){
+            pwdModalCloase(){
                 const modal = document.getElementById('pwd-modal');
                 const background = document.getElementById('modal-background');
                 modal!.style.display = 'none';
@@ -106,6 +106,19 @@
                     this.isProcessing = false;
                     return;
                 }
+
+                const passwordRegex = /^[a-zA-Z0-9]{8,16}$/ as RegExp;
+
+                
+                if(!passwordRegex.test(this.newPassword )){
+                    swal.fire({
+                        icon: 'warning',
+                        html: '비밀번호 규칙을 확인하세요<br/> (알파벳, 숫자를 사용해서 8글자 이상 16글자 이하)'
+                    })
+                    this.isProcessing = false;
+                    return;
+                }
+
                 if(this.newPassword != this.retypingPassword){
                     swal.fire({
                         icon: 'warning',
@@ -129,7 +142,7 @@
                     }
                     ).then(async (res)=>{
                         this.isProcessing = false;
-                        this.leaveModalCloase()
+                        this.pwdModalCloase()
                         if(res.data.result == 1){
                             swal.fire({
                                 text: '변경에 성공했습니다.',
